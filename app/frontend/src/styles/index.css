@@ -1,0 +1,317 @@
+/* Image Lifecycle UI - CloudSigma Theme */
+
+/* ============================================
+   CSS VARIABLES - LIGHT THEME (DEFAULT)
+   ============================================ */
+:root {
+  --cs-green: #00A94F;
+  --cs-green-dark: #008a40;
+  --cs-green-bg: rgba(0, 169, 79, 0.10);
+  --cs-green-bg-hover: rgba(0, 169, 79, 0.16);
+  --cs-accent-orange: #E0A55A;
+
+  --sidebar-width: 220px;
+
+  --bg-body: #f4f6f9;
+  --bg-surface: #ffffff;
+  --bg-card: #f8f9fa;
+  --bg-header: #f0f2f5;
+  --bg-input: #f0f2f5;
+
+  --border-color: #e0e4ea;
+  --table-border: #f0f2f5;
+
+  --text-primary: #1a2233;
+  --text-heading: #111827;
+  --text-secondary: #6b7280;
+  --text-muted: #9ca3af;
+
+  --shadow-card: 0 1px 4px rgba(0,0,0,0.06);
+  --shadow-card-hover: 0 4px 12px rgba(0,0,0,0.10);
+
+  --scrollbar-thumb: #d1d5db;
+  --scrollbar-hover: #9ca3af;
+
+  --top-accent-height: 3px;
+}
+
+/* ============================================
+   CSS VARIABLES - DARK THEME
+   ============================================ */
+[data-bs-theme="dark"] {
+  --bg-body: #0f1117;
+  --bg-surface: #1a1f2e;
+  --bg-card: #222840;
+  --bg-header: #1e2433;
+  --bg-input: #252b3b;
+
+  --border-color: #2d3448;
+  --table-border: #252b3b;
+
+  --text-primary: #e2e8f0;
+  --text-heading: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+
+  --shadow-card: 0 1px 4px rgba(0,0,0,0.3);
+  --shadow-card-hover: 0 4px 12px rgba(0,0,0,0.4);
+
+  --scrollbar-thumb: #334155;
+  --scrollbar-hover: #475569;
+}
+
+/* ============================================
+   BASE
+   ============================================ */
+body {
+  background: var(--bg-body);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+/* ============================================
+   TOP ACCENT BAR
+   ============================================ */
+.top-accent-bar {
+  height: var(--top-accent-height);
+  background: var(--cs-green);
+  flex-shrink: 0;
+}
+
+/* ============================================
+   SIDEBAR
+   ============================================ */
+.sidebar {
+  width: var(--sidebar-width);
+  min-width: var(--sidebar-width);
+  background: var(--bg-surface);
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex-shrink: 0;
+}
+
+.sidebar-brand {
+  padding: 1rem 1.25rem 0.75rem;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--cs-green);
+  letter-spacing: -0.01em;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sidebar-brand .brand-sub {
+  font-size: 0.7rem;
+  font-weight: 400;
+  color: var(--text-muted);
+  display: block;
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 0.75rem 0;
+}
+
+.sidebar-section-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: 0.5rem 1.25rem 0.25rem;
+}
+
+.sidebar .nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.45rem 1.25rem;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  border-radius: 0;
+  transition: background 0.12s, color 0.12s;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.sidebar .nav-link:hover {
+  background: var(--bg-header);
+  color: var(--text-primary);
+}
+
+.sidebar .nav-link.active {
+  background: var(--cs-green-bg);
+  color: var(--cs-green);
+  font-weight: 600;
+  border-right: 3px solid var(--cs-green);
+}
+
+.sidebar-footer {
+  border-top: 1px solid var(--border-color);
+  padding: 0.75rem 1rem;
+}
+
+.sidebar-user {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.sidebar-user strong {
+  color: var(--text-primary);
+  display: block;
+  font-size: 0.82rem;
+}
+
+/* ============================================
+   THEME TOGGLE
+   ============================================ */
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  padding: 4px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+  width: 100%;
+  margin-top: 0.4rem;
+}
+.theme-toggle:hover {
+  color: var(--text-primary);
+  background: var(--bg-header);
+}
+
+/* ============================================
+   MAIN CONTENT AREA
+   ============================================ */
+.page-header {
+  margin-bottom: 1.5rem;
+}
+
+.page-header h1 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-heading);
+  margin: 0;
+}
+
+/* ============================================
+   CARDS
+   ============================================ */
+.card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-card);
+  border-radius: 0.5rem;
+}
+
+.stat-card {
+  padding: 1.25rem;
+}
+
+.stat-card .stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-heading);
+  line-height: 1;
+}
+
+.stat-card .stat-label {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.stat-card .stat-icon {
+  font-size: 1.4rem;
+  color: var(--cs-green);
+}
+
+/* ============================================
+   TABLES
+   ============================================ */
+.table {
+  color: var(--text-primary);
+  font-size: 0.85rem;
+}
+
+.table th {
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.table td {
+  border-color: var(--table-border);
+  vertical-align: middle;
+}
+
+/* ============================================
+   STATUS BADGES
+   ============================================ */
+.badge {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.3em 0.6em;
+}
+
+/* ============================================
+   REGION CARDS
+   ============================================ */
+.region-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  padding: 1rem 1.25rem;
+  text-align: center;
+}
+
+.region-card .region-name {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text-heading);
+}
+
+/* ============================================
+   SCROLLBAR
+   ============================================ */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--scrollbar-hover); }
+
+/* ============================================
+   RESPONSIVE SIDEBAR
+   ============================================ */
+@media (max-width: 767.98px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: calc(-1 * var(--sidebar-width));
+    z-index: 1050;
+    height: 100vh;
+    transition: left 0.2s;
+  }
+  .sidebar.show { left: 0; }
+}
