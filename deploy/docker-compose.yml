@@ -1,0 +1,39 @@
+services:
+  backend:
+    build: ../app/backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://lifecycle:lifecycle@db:5432/lifecycle
+      - SECRET_KEY=${SECRET_KEY:-dev-secret-change-me-in-production}
+      - SCRIPTS_DIR=/scripts
+      - LOGS_DIR=/logs
+      - CS_API_USER=${CS_API_USER:-}
+      - CS_API_PASS=${CS_API_PASS:-}
+      - INITIAL_OWNER_EMAIL=${INITIAL_OWNER_EMAIL:-beloslava.spiridonova@cloudsigma.com}
+      - INITIAL_OWNER_NAME=${INITIAL_OWNER_NAME:-Beloslava Spiridonova}
+    depends_on:
+      - db
+    volumes:
+      - ../scripts:/scripts:ro
+      - logs:/logs
+
+  frontend:
+    build: ../app/frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: lifecycle
+      POSTGRES_USER: lifecycle
+      POSTGRES_PASSWORD: lifecycle
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
+  logs:
