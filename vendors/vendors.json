@@ -1,0 +1,18 @@
+{
+  "vendors": [
+    {
+      "name": "ubuntu",
+      "family": "ubuntu-lts",
+      "description": "Ubuntu LTS releases - primary OS for CloudSigma pre-installed images",
+      "metadata_url": "https://cloud-images.ubuntu.com/",
+      "supported_versions": ["22.04", "24.04"],
+      "default_version": "22.04",
+      "supported_architectures": ["x86_64", "aarch64"],
+      "supported_firmware": ["bios", "uefi"],
+      "discovery_mode": "manual",
+      "image_naming_convention": "openclaw-ubuntu-{version}-{date}",
+      "default_guest_username": "cloud",
+      "notes": "Primary vendor. cloud-init datasource: CloudSigma. Guest user: cloud (migrating from cloudsigma)."
+    }
+  ]
+}

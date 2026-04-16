@@ -1,0 +1,10 @@
+# Logs
+logs/
+*.log
+
+# Temporary files
+*.tmp
+
+# Environment / secrets
+.env
+secrets/

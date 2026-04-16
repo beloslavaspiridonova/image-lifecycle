@@ -1,0 +1,10 @@
+{
+  "roles": [
+    {"name": "image-admin", "description": "Full access: approve, publish, rollback, manage roles, vendors, instructions, policy", "assigned_to": ["beloslava.spiridonova@cloudsigma.com"]},
+    {"name": "image-reviewer", "description": "Review STAGING, approve PRODUCTION, approve AI-suggested instruction/script changes", "assigned_to": ["beloslava.spiridonova@cloudsigma.com"]},
+    {"name": "image-maintainer", "description": "Run updates manually, trigger tests, manage candidates, propose script/instruction changes", "assigned_to": ["beloslava.spiridonova@cloudsigma.com", "ellie-ai"]},
+    {"name": "image-automation", "description": "CI/CD service account: run scheduled discovery and weekly cycle, create candidates, execute tests", "assigned_to": ["ci-service-account"]},
+    {"name": "image-editor", "description": "Edit vendor definitions, installation instructions, update procedures (subject to approval)", "assigned_to": []},
+    {"name": "image-viewer", "description": "Read-only: status, test results, image history, source definitions, approved instructions", "assigned_to": ["jops-team"]}
+  ]
+}
