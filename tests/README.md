@@ -1,57 +1,161 @@
-# Test Suite
+# CloudSigma Image Validation Test Suite
 
-## Overview
+This directory contains the validation suite for CloudSigma pre-installed Ubuntu VM images. Run it after building or updating an image to confirm all expected components are properly configured.
 
-`test-suite.sh` validates that a CloudSigma pre-installed VM image meets all quality gates before it can be promoted to STAGING or PRODUCTION.
-
-## Usage
+## Quick Start
 
 ```bash
-# Run all 19 tests (requires sudo for some checks):
+# Run full suite (as root or via sudo)
 sudo bash tests/test-suite.sh
 
-# Verbose output (shows what each test is checking):
+# Verbose mode (show detail on each test)
 sudo bash tests/test-suite.sh --verbose
 
-# Run a single test:
+# Run a single test
 sudo bash tests/test-suite.sh --test=openclaw_service_running
 
-# Results are saved to logs/test-results-YYYY-MM-DD-HHMMSS.txt
+# Show help
+sudo bash tests/test-suite.sh --help
 ```
 
-## The 19 Tests
+Results are printed to the terminal with color-coded `PASS`/`FAIL` indicators and also written to:
+```
+logs/test-results-YYYY-MM-DD-HHMMSS.txt
+```
+
+---
+
+## All 19 Tests
+
+### Services
 
 | # | Test Name | What It Checks |
-|---|---|---|
-| 1 | openclaw_service_running | `openclaw.service` is active via systemctl |
-| 2 | webchat_service_running | `webchat-ui.service` is active via systemctl |
-| 3 | tailscale_installed | `tailscale` binary is present and returns a version |
-| 4 | tailscale_not_logged_in | Tailscale is installed but NOT authenticated (customer logs in) |
-| 5 | taas_configured | openclaw.json contains TaaS provider configuration |
-| 6 | openclaw_models_count | openclaw.json has >=10 models configured |
-| 7 | skills_present | At least 1 skill exists in workspace/skills/ |
-| 8 | bootstrap_ready | BOOTSTRAP.md exists at workspace root |
-| 9 | cloud_init_installed | `cloud-init` binary present and returns version |
-| 10 | cloud_init_datasource | CloudSigma datasource configured in /etc/cloud/cloud.cfg |
-| 11 | guest_user_exists | Guest user (`cloud` or `cloudsigma`) exists in /etc/passwd |
-| 12 | guest_user_sudo | Guest user has sudo access |
-| 13 | guest_user_homedir | /home/<guest_user> directory exists |
-| 14 | no_hardcoded_old_username | No /home/cloudsigma references in active systemd service files (post-migration) |
-| 15 | ssh_key_injection_config | cloud-init configured to inject SSH keys |
-| 16 | hostname_config | cloud-init configured for hostname setup |
-| 17 | network_reachable | Internet connectivity to cloudsigma.com |
-| 18 | openclaw_webchat_port | webchat-ui is listening on a port |
-| 19 | metadata_service_reachable | CloudSigma metadata service is reachable |
+|---|-----------|----------------|
+| 1 | `openclaw_service_running` | Runs `systemctl is-active openclaw`. The OpenClaw AI assistant service must be active and running. |
+| 2 | `webchat_service_running` | Runs `systemctl is-active webchat-ui`. The web chat interface service must be active and running. |
 
-## Pass/Fail Criteria
+### Tailscale
 
-- **PASS**: All 19 tests pass - image is eligible for STAGING promotion
-- **FAIL**: Any test fails - image must not be promoted until fixed
+| # | Test Name | What It Checks |
+|---|-----------|----------------|
+| 3 | `tailscale_installed` | Verifies `tailscale` is present in `$PATH` and can report its version. Tailscale must be installed but customers activate it themselves. |
+| 4 | `tailscale_not_logged_in` | Confirms the image ships with Tailscale in a logged-out state. A pre-installed image must not carry an active Tailscale session — customers log in with their own account at first boot. |
 
-## Guest User Detection
+### OpenClaw / TaaS
 
-The suite auto-detects whether the image uses `cloud` or `cloudsigma` as the guest user. During migration, `cloudsigma` is expected. New images should use `cloud`.
+| # | Test Name | What It Checks |
+|---|-----------|----------------|
+| 5 | `taas_configured` | Checks that `~/.openclaw/openclaw.json` (for the `cloud` user) contains a TaaS provider entry. |
+| 17 | `openclaw_models_count` | Parses `openclaw.json` and counts configured models. At least **10 models** must be present. Uses Python3 for accurate JSON parsing with grep fallback. |
 
-## Log Files
+### Workspace
 
-Results are saved to `logs/test-results-YYYY-MM-DD-HHMMSS.txt`. These are gitignored. Keep them for audit purposes.
+| # | Test Name | What It Checks |
+|---|-----------|----------------|
+| 6 | `skills_present` | Verifies that `~/.openclaw/workspace/skills/` exists and contains at least one skill directory. Required skills (e.g. `bash`) are explicitly verified. |
+| 7 | `bootstrap_ready` | Confirms `~/.openclaw/workspace/BOOTSTRAP.md` exists and has content. This file drives first-boot onboarding for new customers. |
+
+### Cloud-Init
+
+| # | Test Name | What It Checks |
+|---|-----------|----------------|
+| 8 | `cloud_init_installed` | Verifies `cloud-init` is installed and executable (`cloud-init --version`). |
+| 9 | `cloud_init_datasource` | Checks `/etc/cloud/cloud.cfg` (and `cloud.cfg.d/`) for the **CloudSigma** datasource in the `datasource_list`. Required for proper VM customization at launch. |
+| 14 | `ssh_key_injection_config` | Verifies cloud-init is configured to inject SSH public keys into the guest user's `authorized_keys`. Checks for `ssh_authorized_keys`, `ssh_import_id`, or a `users` block in the cloud-init config. |
+| 15 | `hostname_config` | Confirms cloud-init will set the hostname at boot. Checks for `set_hostname` / `update_hostname` modules or `preserve_hostname: false` in the config. |
+
+### Guest User
+
+| # | Test Name | What It Checks |
+|---|-----------|----------------|
+| 10 | `guest_user_exists` | Runs `id cloud` — the primary guest username (`cloud`) must exist on the system. |
+| 11 | `guest_user_sudo` | Confirms the `cloud` user has `sudo` access, either via the `sudo`/`wheel`/`admin` group or a sudoers entry. |
+| 12 | `guest_user_homedir` | Verifies `/home/cloud` exists and matches the home directory registered for the `cloud` user in `/etc/passwd`. |
+| 13 | `no_hardcoded_old_username` | Scans key configuration files for references to the **old username `cloudsigma`** (migration check). Checks: `/etc/cloud/cloud.cfg`, `/etc/sudoers`, `/etc/sudoers.d/*`, and systemd service unit files for `openclaw` and `webchat-ui`. |
+
+### Network
+
+| # | Test Name | What It Checks |
+|---|-----------|----------------|
+| 16 | `network_reachable` | Performs a `curl` to `https://cloudsigma.com` and checks for a valid HTTP response (200/301/302). Falls back to `https://google.com` if CloudSigma is unreachable but the network is up. |
+| 18 | `openclaw_webchat_port` | Confirms the webchat-ui is listening on the expected port (**3000** by default). Checks using `ss`, `netstat`, `lsof`, and a direct `curl` to `localhost:3000`, in order of availability. |
+| 19 | `metadata_service_reachable` | Tries to reach the CloudSigma metadata service endpoints (`http://cloudsigma-datasource/`, `http://cloudsigma-datasource/meta/1.0/`, and `http://169.254.169.254/`). Required for cloud-init to fetch VM-specific data at boot. |
+
+---
+
+## Exit Codes
+
+| Code | Meaning |
+|------|---------|
+| `0`  | All tests passed |
+| `1`  | One or more tests failed |
+
+---
+
+## Flags
+
+| Flag | Description |
+|------|-------------|
+| `--verbose` / `-v` | Print detail lines for each test (also always written to log file) |
+| `--test=NAME` | Run a single test by name (e.g. `--test=guest_user_exists`) |
+| `--help` / `-h` | Show usage and list all test names |
+
+---
+
+## Output
+
+### Terminal (color when supported)
+```
+── Services
+  ✓ PASS  openclaw_service_running
+  ✓ PASS  webchat_service_running
+
+── Tailscale
+  ✓ PASS  tailscale_installed
+  ✓ PASS  tailscale_not_logged_in
+...
+============================================================
+  RESULT: 19/19 passed — ALL TESTS PASSED ✓
+  Log written to: logs/test-results-2026-04-16-120000.txt
+============================================================
+```
+
+### Log file
+Same output is written to `logs/test-results-YYYY-MM-DD-HHMMSS.txt`. In verbose mode, detail lines are always written to the log (even when `--verbose` is not passed to the terminal).
+
+---
+
+## Adding Tests
+
+1. Define a new function `test_YOUR_TEST_NAME()` in `test-suite.sh`
+2. Call `pass "YOUR_TEST_NAME" "detail"` or `fail "YOUR_TEST_NAME" "reason"` inside it
+3. Add the test name to the `ALL_TESTS` array and call it in the appropriate section block
+4. Update this README with the new test description
+5. Update `TOTAL_TESTS=19` at the top of the script to the new count
+
+---
+
+## Running in CI / Packer
+
+To run in a Packer provisioner or CI pipeline:
+
+```bash
+sudo bash /path/to/tests/test-suite.sh
+# Script exits 0 on success, 1 on failure — CI-friendly
+```
+
+For Packer, add as a shell provisioner step after all other provisioners complete.
+
+---
+
+## Configuration Variables
+
+At the top of `test-suite.sh`, the following variables can be adjusted:
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `GUEST_USER` | `cloud` | Primary guest username |
+| `GUEST_HOME` | `/home/cloud` | Expected home directory |
+| `MIN_MODELS` | `10` | Minimum OpenClaw model count |
+| `WEBCHAT_PORT` | `3000` | Expected webchat-ui port |
+| `REQUIRED_SKILLS` | `(bash)` | Skills that must be present |

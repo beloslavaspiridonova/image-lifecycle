@@ -1,0 +1,16 @@
+{
+  "ubuntu": {
+    "22.04": {
+      "serial": "20260320",
+      "codename": "jammy",
+      "checked_at": "2026-04-16T19:09:52.683180+00:00",
+      "notes": "Populated by manual discovery run 2026-04-16"
+    },
+    "24.04": {
+      "serial": "20260321",
+      "codename": "noble",
+      "checked_at": "2026-04-16T19:09:52.683201+00:00",
+      "notes": "Populated by manual discovery run 2026-04-16"
+    }
+  }
+}

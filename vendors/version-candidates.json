@@ -1,0 +1,43 @@
+[
+  {
+    "id": "ubuntu-22.04-20230303",
+    "vendor": "ubuntu",
+    "family": "ubuntu-lts",
+    "version": "22.04",
+    "serial": "20230303",
+    "classification": "new_patch",
+    "discovered_at": "2026-04-16T19:03:20.471497Z",
+    "status": "proposed",
+    "intake_mode": "automatic",
+    "approved_by": null,
+    "notes": "Auto-discovered by discover.sh"
+  },
+  {
+    "id": "ubuntu-22.04-20260320",
+    "vendor": "ubuntu",
+    "family": "ubuntu-lts",
+    "version": "22.04",
+    "serial": "20260320",
+    "codename": "jammy",
+    "classification": "new_patch",
+    "discovered_at": "2026-04-16T19:09:52.683471+00:00",
+    "status": "proposed",
+    "intake_mode": "automatic",
+    "approved_by": null,
+    "notes": "Auto-discovered 2026-04-16"
+  },
+  {
+    "id": "ubuntu-24.04-20260321",
+    "vendor": "ubuntu",
+    "family": "ubuntu-lts",
+    "version": "24.04",
+    "serial": "20260321",
+    "codename": "noble",
+    "classification": "new_patch",
+    "discovered_at": "2026-04-16T19:09:52.683482+00:00",
+    "status": "proposed",
+    "intake_mode": "automatic",
+    "approved_by": null,
+    "notes": "Auto-discovered 2026-04-16"
+  }
+]

@@ -1,0 +1,39 @@
+{
+  "regions": [
+    {
+      "name": "ZRH",
+      "description": "Zurich, Switzerland (primary)",
+      "api_url": "https://zrh.cloudsigma.com/api/2.0/",
+      "priority": 0,
+      "notes": "Primary region - distribute here first always"
+    },
+    {
+      "name": "FRA",
+      "description": "Frankfurt, Germany",
+      "api_url": "https://fra.cloudsigma.com/api/2.0/",
+      "priority": 1,
+      "notes": "Parallel distribution group with SJC and MNL"
+    },
+    {
+      "name": "SJC",
+      "description": "San Jose, California",
+      "api_url": "https://sjc.cloudsigma.com/api/2.0/",
+      "priority": 1,
+      "notes": "Parallel distribution group with FRA and MNL"
+    },
+    {
+      "name": "MNL",
+      "description": "Manila, Philippines",
+      "api_url": "https://mnl.cloudsigma.com/api/2.0/",
+      "priority": 1,
+      "notes": "Parallel distribution group with FRA and SJC"
+    },
+    {
+      "name": "TYO",
+      "description": "Tokyo, Japan",
+      "api_url": "https://tyo.cloudsigma.com/api/2.0/",
+      "priority": 2,
+      "notes": "Distribute after ZRH+FRA+SJC+MNL complete"
+    }
+  ]
+}
