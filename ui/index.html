@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CloudSigma Image Lifecycle UI Prototype</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #121935;
+      --panel-2: #182247;
+      --text: #eef2ff;
+      --muted: #9aa5d1;
+      --border: #2b3a70;
+      --accent: #7c9cff;
+      --good: #22c55e;
+      --warn: #f59e0b;
+      --bad: #ef4444;
+      --chip: #23325f;
+      --owner: #eab308;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background: linear-gradient(180deg, #0b1020 0%, #0e1430 100%);
+      color: var(--text);
+    }
+    .app {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      min-height: 100vh;
+    }
+    .sidebar {
+      background: rgba(10, 15, 33, 0.95);
+      border-right: 1px solid var(--border);
+      padding: 20px 16px;
+    }
+    .brand {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+    .subbrand {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 24px;
+    }
+    .nav a {
+      display: block;
+      color: var(--text);
+      text-decoration: none;
+      padding: 12px 14px;
+      border-radius: 12px;
+      margin-bottom: 8px;
+      background: transparent;
+      border: 1px solid transparent;
+    }
+    .nav a.active, .nav a:hover {
+      background: var(--panel);
+      border-color: var(--border);
+    }
+    .main {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(11, 16, 32, 0.7);
+      backdrop-filter: blur(10px);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .chips, .userbar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .chip {
+      background: var(--chip);
+      color: var(--text);
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      border: 1px solid var(--border);
+    }
+    .chip.owner { color: #1a1400; background: #fde68a; border-color: #facc15; font-weight: 700; }
+    .chip.good { color: #052e16; background: #86efac; border-color: #22c55e; }
+    .chip.warn { color: #3b2300; background: #fcd34d; border-color: #f59e0b; }
+    .chip.bad { color: #450a0a; background: #fca5a5; border-color: #ef4444; }
+    .content { padding: 24px; display: grid; gap: 24px; }
+    .section-title { font-size: 24px; font-weight: 800; margin: 0 0 6px; }
+    .section-sub { color: var(--muted); margin: 0; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 16px; }
+    .grid-2 { display: grid; grid-template-columns: 1.2fr 1fr; gap: 16px; }
+    .panel {
+      background: linear-gradient(180deg, rgba(18,25,53,0.95), rgba(13,19,40,0.95));
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+    }
+    .card-title { color: var(--muted); font-size: 13px; margin-bottom: 10px; }
+    .metric { font-size: 30px; font-weight: 800; }
+    .metric-sub { color: var(--muted); font-size: 13px; margin-top: 8px; }
+    table {
+      width: 100%; border-collapse: collapse; font-size: 14px;
+    }
+    th, td {
+      text-align: left; padding: 12px 10px; border-bottom: 1px solid rgba(154,165,209,0.15);
+      vertical-align: top;
+    }
+    th { color: var(--muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+    button {
+      background: var(--accent); color: white; border: 0; border-radius: 12px; padding: 10px 14px;
+      font-weight: 700; cursor: pointer;
+    }
+    button.secondary { background: #25345f; border: 1px solid var(--border); }
+    .timeline { display: grid; gap: 12px; }
+    .item {
+      padding: 12px 14px; border: 1px solid rgba(154,165,209,0.18); border-radius: 14px; background: rgba(255,255,255,0.02);
+    }
+    .item small { color: var(--muted); display: block; margin-top: 6px; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .muted { color: var(--muted); }
+    .settings-list { display: grid; gap: 12px; }
+    .settings-row {
+      display: flex; justify-content: space-between; align-items: center; gap: 16px;
+      padding: 12px 0; border-bottom: 1px solid rgba(154,165,209,0.15);
+    }
+    @media (max-width: 1100px) {
+      .app { grid-template-columns: 1fr; }
+      .sidebar { border-right: 0; border-bottom: 1px solid var(--border); }
+      .grid-3, .grid-2, .two-col { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">CloudSigma Image Lifecycle</div>
+      <div class="subbrand">Internal operator console prototype</div>
+      <nav class="nav">
+        <a class="active" href="#overview">Overview</a>
+        <a href="#publish">Publish Queue</a>
+        <a href="#validation">Validation</a>
+        <a href="#builds">Build Runs</a>
+        <a href="#settings">Settings</a>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="chips">
+          <span class="chip">env: internal-dev</span>
+          <span class="chip good">last cycle: healthy</span>
+          <span class="chip warn">2 pending approvals</span>
+        </div>
+        <div class="userbar">
+          <span class="chip owner">OWNER</span>
+          <span class="chip">Bela</span>
+          <span class="chip">role: owner</span>
+        </div>
+      </div>
+
+      <div class="content">
+        <section id="overview">
+          <h1 class="section-title">Overview</h1>
+          <p class="section-sub">Current health of the image lifecycle system</p>
+          <div class="grid-3">
+            <div class="panel">
+              <div class="card-title">Latest Discovery</div>
+              <div class="metric">1</div>
+              <div class="metric-sub">New candidate discovered - Ubuntu 24.04</div>
+            </div>
+            <div class="panel">
+              <div class="card-title">Latest Build</div>
+              <div class="metric">SUCCESS</div>
+              <div class="metric-sub">openclaw-ubuntu-22.04-2026-04-16-staging</div>
+            </div>
+            <div class="panel">
+              <div class="card-title">Pending Approvals</div>
+              <div class="metric">2</div>
+              <div class="metric-sub">1 publish request, 1 script-change review item</div>
+            </div>
+          </div>
+
+          <div class="grid-2" style="margin-top:16px;">
+            <div class="panel">
+              <div class="card-title">Recent Activity</div>
+              <div class="timeline">
+                <div class="item">Build succeeded for Ubuntu 22.04 staging snapshot<small>20:23 UTC - image-automation</small></div>
+                <div class="item">Publish request created and assigned to Bela<small>20:24 UTC - image-automation</small></div>
+                <div class="item">Role/auth/UI backend docs expanded<small>20:17 UTC - Ellie</small></div>
+              </div>
+            </div>
+            <div class="panel">
+              <div class="card-title">Attention Needed</div>
+              <div class="timeline">
+                <div class="item">Manual MI publish still pending<small>Publish request waiting for reviewer action</small></div>
+                <div class="item">First-boot validation not yet fully wired<small>Critical before real release gate</small></div>
+              </div>
+              <div class="actions">
+                <button>Trigger Discovery</button>
+                <button class="secondary">Start Build</button>
+                <button class="secondary">Open Publish Queue</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="publish">
+          <h2 class="section-title">Publish Queue</h2>
+          <p class="section-sub">Human approval and manual MI bridge</p>
+          <div class="two-col">
+            <div class="panel">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Request ID</th>
+                    <th>Snapshot</th>
+                    <th>Validation</th>
+                    <th>Approval</th>
+                    <th>MI</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>publish_20260416_001</td>
+                    <td>openclaw-ubuntu-22.04-2026-04-16-staging</td>
+                    <td><span class="chip good">PASS 19/19</span></td>
+                    <td><span class="chip warn">publish-pending</span></td>
+                    <td><span class="chip warn">pending</span></td>
+                  </tr>
+                  <tr>
+                    <td>publish_20260414_004</td>
+                    <td>openclaw-ubuntu-22.04-2026-04-14-staging</td>
+                    <td><span class="chip good">PASS 19/19</span></td>
+                    <td><span class="chip good">published</span></td>
+                    <td><span class="chip good">completed</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="panel">
+              <div class="card-title">Selected Publish Request</div>
+              <div class="muted">publish_20260416_001</div>
+              <div class="timeline" style="margin-top:12px;">
+                <div class="item">Snapshot: <strong>openclaw-ubuntu-22.04-2026-04-16-staging</strong></div>
+                <div class="item">Reviewer: <strong>Bela</strong></div>
+                <div class="item">Manual MI publish required before promotion and distribution</div>
+                <div class="item">Distribution readiness: ZRH -> FRA/SJC/MNL -> TYO</div>
+              </div>
+              <div class="actions">
+                <button>Approve</button>
+                <button class="secondary">Defer</button>
+                <button class="secondary">Reject</button>
+                <button class="secondary">Mark MI Complete</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="validation">
+          <h2 class="section-title">Validation</h2>
+          <p class="section-sub">Reviewer-first summary of image safety</p>
+          <div class="grid-3">
+            <div class="panel">
+              <div class="card-title">Pass Count</div>
+              <div class="metric">19</div>
+            </div>
+            <div class="panel">
+              <div class="card-title">Fail Count</div>
+              <div class="metric">0</div>
+            </div>
+            <div class="panel">
+              <div class="card-title">First-Boot Status</div>
+              <div class="metric">Pending</div>
+              <div class="metric-sub">Design + scaffolding complete, wiring still needed</div>
+            </div>
+          </div>
+          <div class="grid-2" style="margin-top:16px;">
+            <div class="panel">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Test</th>
+                    <th>Result</th>
+                    <th>Risk</th>
+                    <th>Notes</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>openclaw_service_running</td>
+                    <td><span class="chip good">passed</span></td>
+                    <td>high</td>
+                    <td>Service active</td>
+                  </tr>
+                  <tr>
+                    <td>cloud_init_datasource</td>
+                    <td><span class="chip good">passed</span></td>
+                    <td>high</td>
+                    <td>CloudSigma datasource present</td>
+                  </tr>
+                  <tr>
+                    <td>guest_user_exists</td>
+                    <td><span class="chip good">passed</span></td>
+                    <td>high</td>
+                    <td>Legacy current env check OK</td>
+                  </tr>
+                  <tr>
+                    <td>first_boot_ssh_login</td>
+                    <td><span class="chip warn">pending</span></td>
+                    <td>critical</td>
+                    <td>Awaiting full first-boot validation integration</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="panel">
+              <div class="card-title">Reviewer Summary</div>
+              <div class="timeline">
+                <div class="item">Current validation is strong for service/config state.</div>
+                <div class="item">Remaining risk is first-boot customer usability: cloud-init + cschpw + SSH path.</div>
+                <div class="item">Publish should remain blocked for new images until first-boot path is proven.</div>
+              </div>
+              <div class="actions">
+                <button class="secondary">Rerun Validation</button>
+                <button class="secondary">Open Artifacts</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="builds">
+          <h2 class="section-title">Build Runs</h2>
+          <p class="section-sub">Build activity, artifacts, and staging snapshots</p>
+          <div class="panel">
+            <table>
+              <thead>
+                <tr>
+                  <th>Build ID</th>
+                  <th>Version</th>
+                  <th>Source Drive</th>
+                  <th>Snapshot</th>
+                  <th>Result</th>
+                  <th>Started By</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>build_20260416_001</td>
+                  <td>22.04</td>
+                  <td>12345678-1234-1234-1234-123456789abc</td>
+                  <td>openclaw-ubuntu-22.04-2026-04-16-staging</td>
+                  <td><span class="chip good">success</span></td>
+                  <td>ellie-ai</td>
+                </tr>
+                <tr>
+                  <td>build_20260414_004</td>
+                  <td>22.04</td>
+                  <td>22345678-1234-1234-1234-123456789abc</td>
+                  <td>openclaw-ubuntu-22.04-2026-04-14-staging</td>
+                  <td><span class="chip good">success</span></td>
+                  <td>image-automation</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="actions">
+              <button>Trigger Build</button>
+              <button class="secondary">Retry Failed Build</button>
+              <button class="secondary">View Logs</button>
+            </div>
+          </div>
+        </section>
+
+        <section id="settings">
+          <h2 class="section-title">Settings</h2>
+          <p class="section-sub">Roles, ownership, and service accounts</p>
+          <div class="two-col">
+            <div class="panel">
+              <div class="card-title">Role Assignments</div>
+              <div class="settings-list">
+                <div class="settings-row"><span>owner</span><span class="muted">Bela</span></div>
+                <div class="settings-row"><span>service_admin</span><span class="muted">Ellie</span></div>
+                <div class="settings-row"><span>reviewer</span><span class="muted">Bela</span></div>
+                <div class="settings-row"><span>maintainer</span><span class="muted">Bela, Ellie, jOPS</span></div>
+                <div class="settings-row"><span>viewer</span><span class="muted">jOPS</span></div>
+              </div>
+            </div>
+            <div class="panel">
+              <div class="card-title">Ownership</div>
+              <div class="timeline">
+                <div class="item">Current owner: <strong>Bela</strong></div>
+                <div class="item">Assigned by: <strong>bootstrap</strong></div>
+                <div class="item">Transfer ownership is owner-only and audited</div>
+              </div>
+              <div class="actions">
+                <button>Transfer Ownership</button>
+                <button class="secondary">Manage Roles</button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

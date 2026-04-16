@@ -1,10 +1,85 @@
 {
+  "schema_version": "2.0",
+  "updated_at": "2026-04-16T19:54:00Z",
+  "role_hierarchy": [
+    "owner",
+    "service_admin",
+    "reviewer",
+    "maintainer",
+    "viewer"
+  ],
   "roles": [
-    {"name": "image-admin", "description": "Full access: approve, publish, rollback, manage roles, vendors, instructions, policy", "assigned_to": ["beloslava.spiridonova@cloudsigma.com"]},
-    {"name": "image-reviewer", "description": "Review STAGING, approve PRODUCTION, approve AI-suggested instruction/script changes", "assigned_to": ["beloslava.spiridonova@cloudsigma.com"]},
-    {"name": "image-maintainer", "description": "Run updates manually, trigger tests, manage candidates, propose script/instruction changes", "assigned_to": ["beloslava.spiridonova@cloudsigma.com", "ellie-ai"]},
-    {"name": "image-automation", "description": "CI/CD service account: run scheduled discovery and weekly cycle, create candidates, execute tests", "assigned_to": ["ci-service-account"]},
-    {"name": "image-editor", "description": "Edit vendor definitions, installation instructions, update procedures (subject to approval)", "assigned_to": []},
-    {"name": "image-viewer", "description": "Read-only: status, test results, image history, source definitions, approved instructions", "assigned_to": ["jops-team"]}
+    {
+      "name": "owner",
+      "scope": "system",
+      "description": "System owner. Can transfer ownership, manage privileged roles, approve production publish, change policy, and perform emergency overrides.",
+      "assigned_to": ["beloslava.spiridonova@cloudsigma.com"]
+    },
+    {
+      "name": "service_admin",
+      "scope": "system",
+      "description": "Internal CloudSigma admin/operator. Can manage most system operations and roles, but cannot transfer ownership.",
+      "assigned_to": ["ellie-ai"]
+    },
+    {
+      "name": "reviewer",
+      "scope": "system",
+      "description": "Approves publish requests and AI-suggested instruction/script changes. Can reject or defer changes.",
+      "assigned_to": ["beloslava.spiridonova@cloudsigma.com"]
+    },
+    {
+      "name": "maintainer",
+      "scope": "system",
+      "description": "Operational role. Can trigger discovery, builds, tests, retries, staging preparation, and failure investigation.",
+      "assigned_to": ["beloslava.spiridonova@cloudsigma.com", "ellie-ai", "jops-team"]
+    },
+    {
+      "name": "viewer",
+      "scope": "system",
+      "description": "Read-only access to status, queue, logs, test results, runbook, and audit history.",
+      "assigned_to": ["jops-team"]
+    }
+  ],
+  "permission_groups": {
+    "OWNER_ROLES": ["owner"],
+    "ADMIN_ROLES": ["owner", "service_admin"],
+    "APPROVER_ROLES": ["owner", "service_admin", "reviewer"],
+    "OPERATOR_ROLES": ["owner", "service_admin", "reviewer", "maintainer"],
+    "READ_ROLES": ["owner", "service_admin", "reviewer", "maintainer", "viewer"]
+  },
+  "capabilities": {
+    "transfer_ownership": ["owner"],
+    "manage_roles": ["owner", "service_admin"],
+    "manage_policy": ["owner", "service_admin"],
+    "approve_publish": ["owner", "service_admin", "reviewer"],
+    "approve_ai_changes": ["owner", "service_admin", "reviewer"],
+    "trigger_discovery": ["owner", "service_admin", "reviewer", "maintainer"],
+    "trigger_build": ["owner", "service_admin", "reviewer", "maintainer"],
+    "trigger_test": ["owner", "service_admin", "reviewer", "maintainer"],
+    "stage_publish_request": ["owner", "service_admin", "reviewer", "maintainer"],
+    "promote_publish_request": ["owner", "service_admin", "reviewer"],
+    "run_distribution": ["owner", "service_admin", "reviewer", "maintainer"],
+    "initiate_rollback": ["owner", "service_admin", "reviewer"],
+    "view_status": ["owner", "service_admin", "reviewer", "maintainer", "viewer"],
+    "view_audit": ["owner", "service_admin", "reviewer", "maintainer", "viewer"]
+  },
+  "service_accounts": [
+    {
+      "name": "image-automation",
+      "type": "service-account",
+      "description": "Scheduled automation actor for discovery, build, test, and queue updates. Cannot approve or transfer ownership.",
+      "capabilities": [
+        "trigger_discovery",
+        "trigger_build",
+        "trigger_test",
+        "stage_publish_request",
+        "view_status"
+      ]
+    }
+  ],
+  "notes": [
+    "This role model aligns structurally with CloudSigma's TaaS and OmniSupport hierarchy.",
+    "Ownership is singular and managed separately from normal role assignment.",
+    "Automation is modeled as a service account, not a human role."
   ]
 }

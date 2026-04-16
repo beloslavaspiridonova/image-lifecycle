@@ -109,14 +109,23 @@ cat roles/roles.json
 
 ## Roles
 
-| Role | Who | Permissions |
-|---|---|---|
-| image-admin | Bela | Full access: approve, publish, rollback, manage everything |
-| image-reviewer | Bela (initially), jOPS lead later | Review STAGING, approve PRODUCTION |
-| image-maintainer | Bela + Ellie + jOPS | Run updates, trigger tests, propose changes |
-| image-automation | CI/CD service account | Scheduled runs, candidate creation, test execution |
-| image-editor | Selected team | Edit vendor defs and instructions (with approval) |
-| image-viewer | Any team member | Read-only access |
+The lifecycle system now uses a CloudSigma-aligned internal role model inspired by TaaS and OmniSupport.
+
+| Role | Primary Purpose |
+|---|---|
+| owner | Singular system owner. Can transfer ownership, manage privileged roles, approve production publish, and control governance. |
+| service_admin | Internal CloudSigma admin/operator. Can manage operations and most settings, but cannot transfer ownership. |
+| reviewer | Approves publish requests and AI-suggested changes. Can reject or defer risky actions. |
+| maintainer | Main operator role. Triggers discovery, builds, tests, retries, staging, and investigations. |
+| viewer | Read-only visibility into status, queue, logs, audit, and docs. |
+
+Automation is represented separately as a service account (`image-automation`), not a human role.
+
+See also:
+- `roles/roles.json`
+- `roles/system-owner.json`
+- `docs/auth-and-role-model.md`
+- `docs/ui-screen-flow-and-login.md`
 
 ---
 

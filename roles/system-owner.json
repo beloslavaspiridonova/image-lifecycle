@@ -1,0 +1,7 @@
+{
+  "owner": "beloslava.spiridonova@cloudsigma.com",
+  "assigned_at": "2026-04-16T19:54:00Z",
+  "assigned_by": "bootstrap",
+  "transfer_requires": ["current_owner"],
+  "notes": "Initial system owner for CloudSigma Image Lifecycle. Only the current owner may transfer ownership."
+}

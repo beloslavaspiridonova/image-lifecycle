@@ -1,0 +1,123 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CloudSigma Image Lifecycle Review Queue",
+  "type": "object",
+  "required": ["schema_version", "updated_at", "items"],
+  "properties": {
+    "schema_version": {
+      "type": "string"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/reviewItem"
+      }
+    }
+  },
+  "$defs": {
+    "reviewItem": {
+      "type": "object",
+      "required": [
+        "id",
+        "type",
+        "title",
+        "status",
+        "created_at",
+        "updated_at",
+        "proposed_by"
+      ],
+      "properties": {
+        "id": { "type": "string" },
+        "type": {
+          "type": "string",
+          "enum": [
+            "vendor-change",
+            "version-candidate",
+            "instruction-change",
+            "script-change",
+            "test-change",
+            "publish-request",
+            "rollback-request",
+            "policy-change",
+            "ownership-transfer"
+          ]
+        },
+        "title": { "type": "string" },
+        "status": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "proposed",
+            "under-review",
+            "approved",
+            "rejected",
+            "deferred",
+            "in-progress",
+            "validated",
+            "publish-pending",
+            "published",
+            "failed",
+            "deprecated"
+          ]
+        },
+        "priority": {
+          "type": "string",
+          "enum": ["low", "medium", "high", "critical"]
+        },
+        "risk_level": {
+          "type": "string",
+          "enum": ["low", "medium", "high", "critical"]
+        },
+        "created_at": { "type": "string", "format": "date-time" },
+        "updated_at": { "type": "string", "format": "date-time" },
+        "proposed_by": { "type": "string" },
+        "reviewer": { "type": ["string", "null"] },
+        "requires_manual_mi": { "type": "boolean" },
+        "mi_state": {
+          "type": ["string", "null"],
+          "enum": ["pending", "completed", "blocked", null]
+        },
+        "approval": {
+          "type": ["object", "null"],
+          "properties": {
+            "approved_by": { "type": ["string", "null"] },
+            "approved_at": { "type": ["string", "null"], "format": "date-time" },
+            "reason": { "type": ["string", "null"] }
+          }
+        },
+        "validation_required": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "notes": { "type": ["string", "null"] },
+        "snapshot": {
+          "type": ["object", "null"],
+          "properties": {
+            "uuid": { "type": "string" },
+            "name": { "type": "string" }
+          }
+        },
+        "build_artifacts": {
+          "type": ["object", "null"],
+          "properties": {
+            "build_log": { "type": ["string", "null"] },
+            "build_drive_uuid": { "type": ["string", "null"] }
+          }
+        },
+        "cleanup": {
+          "type": ["object", "null"],
+          "properties": {
+            "status": { "type": "string" },
+            "retention_days": { "type": "integer" },
+            "notes": { "type": ["string", "null"] },
+            "recorded_at": { "type": ["string", "null"], "format": "date-time" }
+          }
+        }
+      }
+    }
+  }
+}
